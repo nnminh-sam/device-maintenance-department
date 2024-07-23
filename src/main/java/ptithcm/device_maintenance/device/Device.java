@@ -36,7 +36,7 @@ public class Device extends BaseEntity {
     @Column(name = "purchase_date", nullable = false)
     private LocalDate purchaseDate;
 
-    @Column(name = "assignedDate")
+    @Column(name = "assigned_date")
     private LocalDate assignedDate;
 
     @Column(name = "warranty_expiry_date", nullable = false)
