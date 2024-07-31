@@ -1,9 +1,9 @@
 package ptithcm.device_maintenance.employee;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ptithcm.device_maintenance.helper.dto.ResponseDto;
 
@@ -11,23 +11,12 @@ import ptithcm.device_maintenance.helper.dto.ResponseDto;
 @RestController
 @RequiredArgsConstructor
 public class EmployeeController {
-    private final EmployeeService employeeService;
-
-//    @GetMapping("")
-//    public ResponseEntity<ResponseDto<List<Employee>>> findAllEmployee(
-//            @RequestParam(name = "size") int size,
-//            @RequestParam(name = "page") int page,
-//            @RequestParam(name = "sort-by", defaultValue = "asc") String sortBy
-//    ) {
-//
-//    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto<Employee>> findEmployeeById(
-            @PathVariable Integer id
-    ) throws BadRequestException {
+    @GetMapping("/my")
+    public ResponseEntity<ResponseDto<Employee>> getEmployeeInformation() {
+        var context = SecurityContextHolder.getContext().getAuthentication();
+        var employee = (Employee) context.getPrincipal();
         return ResponseEntity.ok(ResponseDto.<Employee>builder()
-                .data(this.employeeService.findById(id))
+                .data(employee)
                 .status(HttpStatus.OK)
                 .message("Success")
                 .build());
