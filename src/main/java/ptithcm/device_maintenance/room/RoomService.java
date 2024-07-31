@@ -22,7 +22,7 @@ public class RoomService {
     }
 
     public List<Room> findAll() {
-        return roomRepository.findAll();
+        return roomRepository.findAllByDeletedAtIsNull();
     }
 
     public Optional<Room> findById(int id) {
@@ -53,6 +53,7 @@ public class RoomService {
             throw new BadRequestException("Room not found");
         }
         Room deletingRoom = room.get();
-        deletingRoom.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        deletingRoom.setDeletedAt(Timestamp.valueOf(LocalDateTime.now()));
+        Room deletedRoom = roomRepository.save(deletingRoom);
     }
 }
