@@ -1,4 +1,4 @@
-package ptithcm.device_maintenance.request;
+package ptithcm.device_maintenance.request.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

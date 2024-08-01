@@ -1,4 +1,4 @@
-package ptithcm.device_maintenance.request;
+package ptithcm.device_maintenance.request.entity;
 
 public enum RequestType {
     MAINTENANCE("MAINTENANCE"),

@@ -1,7 +1,6 @@
 package ptithcm.device_maintenance.employee;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,11 +10,7 @@ import java.util.Optional;
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
-    public Employee findById(Integer id) throws BadRequestException {
-        Optional<Employee> employee = employeeRepository.findById(id);
-        if (employee.isEmpty()) {
-            throw new BadRequestException("Invalid Id");
-        }
-        return employee.get();
+    public Optional<Employee> findById(Integer id) {
+        return employeeRepository.findById(id);
     }
 }
