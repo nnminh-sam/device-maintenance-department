@@ -23,7 +23,7 @@ public class DateHelper {
         for (var format : formats) {
             try {
                 LocalDate parsedDate = LocalDate.parse(date, format);
-                return Optional.of(parsedDate.plusDays(1));
+                return Optional.of(parsedDate);
             } catch (Exception e) {
                 // Log the exception and continue to the next format
                 // System.err.println("Failed to parse date with format: " + format + " due to: " + e.getMessage());
