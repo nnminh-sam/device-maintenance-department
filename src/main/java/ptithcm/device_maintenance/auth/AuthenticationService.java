@@ -1,5 +1,6 @@
 package ptithcm.device_maintenance.auth;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,12 +24,11 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(
-            RegisterRequest payload
+            @Valid RegisterRequest payload
     ) throws BadRequestException {
         var newEmployee = payload.toEmployee(passwordEncoder);
         Employee saved = employeeRepository.save(newEmployee);
-        System.out.println(saved);
-        var jwtToken = jwtService.generateToken(newEmployee);
+        var jwtToken = jwtService.generateToken(saved);
         return new AuthenticationResponse(jwtToken);
     }
 

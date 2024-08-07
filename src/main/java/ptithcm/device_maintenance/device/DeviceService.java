@@ -25,12 +25,22 @@ public class DeviceService {
         return deviceRepository.findById(id);
     }
 
-    public Device createDevice(CreateDeviceDto payload) {
+    public Device createDevice(CreateDeviceDto payload) throws BadRequestException {
+        var parsedPurchaseDate = DateHelper.parseStringAsLocalDate(payload.getPurchaseDate());
+        if (parsedPurchaseDate.isEmpty()) {
+            throw new BadRequestException("Invalid purchase date format");
+        }
+
+        var parsedWarrantyExpiryDate = DateHelper.parseStringAsLocalDate(payload.getWarrantyExpiryDate());
+        if (parsedWarrantyExpiryDate.isEmpty()) {
+            throw new BadRequestException("Invalid warranty expiry date format");
+        }
+
         Device newDevice = Device.builder()
                 .serialNumber(payload.getSerialNumber())
                 .deviceName(payload.getDeviceName())
-                .purchaseDate(DateHelper.parseStringAsLocalDate(payload.getPurchaseDate()))
-                .warrantyExpiryDate(DateHelper.parseStringAsLocalDate(payload.getWarrantyExpiryDate()))
+                .purchaseDate(parsedPurchaseDate.get())
+                .warrantyExpiryDate(parsedWarrantyExpiryDate.get())
                 .deviceStatus(payload.getDeviceStatus())
                 .build();
         return deviceRepository.save(newDevice);
@@ -42,11 +52,21 @@ public class DeviceService {
             throw new BadRequestException("Device not found");
         }
 
+        var parsedPurchaseDate = DateHelper.parseStringAsLocalDate(payload.getPurchaseDate());
+        if (parsedPurchaseDate.isEmpty()) {
+            throw new BadRequestException("Invalid purchase date format");
+        }
+
+        var parsedWarrantyExpiryDate = DateHelper.parseStringAsLocalDate(payload.getWarrantyExpiryDate());
+        if (parsedWarrantyExpiryDate.isEmpty()) {
+            throw new BadRequestException("Invalid warranty expiry date format");
+        }
+
         Device updatedDevice = Device.builder()
                 .serialNumber(payload.getSerialNumber())
                 .deviceName(payload.getDeviceName())
-                .purchaseDate(DateHelper.parseStringAsLocalDate(payload.getPurchaseDate()))
-                .warrantyExpiryDate(DateHelper.parseStringAsLocalDate(payload.getWarrantyExpiryDate()))
+                .purchaseDate(parsedPurchaseDate.get())
+                .warrantyExpiryDate(parsedWarrantyExpiryDate.get())
                 .deviceStatus(payload.getDeviceStatus())
                 .updatedAt(Timestamp.valueOf(LocalDateTime.now()))
                 .build();

@@ -2,27 +2,34 @@ package ptithcm.device_maintenance.helper;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 public class DateHelper {
-    public static LocalDate parseStringAsLocalDate(String dateValue) {
-        Pattern pattern = Pattern.compile("([A-Za-z]{3} [A-Za-z]{3} \\d{2} \\d{4} \\d{2}:\\d{2}:\\d{2} GMT[+-]\\d{4})");
-        Matcher matcher = pattern.matcher(dateValue);
+    private static final List<DateTimeFormatter> formats = List.of(
+            DateTimeFormatter.ofPattern("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("EEE MMM dd yyyy HH:mm:ss 'GMTZ'", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("EEE MMM dd yyyy HH:mm:ss 'GMT'Z (zzzz)", Locale.ENGLISH),
+            DateTimeFormatter.ISO_DATE_TIME,
+            DateTimeFormatter.ISO_DATE,
+            DateTimeFormatter.ISO_LOCAL_DATE,
+            DateTimeFormatter.ISO_OFFSET_DATE_TIME
+    );
 
-        if (matcher.find()) {
-            String extractedDateString = matcher.group(1);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd yyyy HH:mm:ss 'GMT'Z");
-
-            ZonedDateTime zonedDateTime = ZonedDateTime.parse(extractedDateString, formatter);
-            return zonedDateTime.toLocalDate();
-        } else {
-            throw new DateTimeParseException("Invalid date format", dateValue, 0);
+    public static Optional<LocalDate> parseStringAsLocalDate(String date) {
+        for (var format : formats) {
+            try {
+                LocalDate parsedDate = LocalDate.parse(date, format);
+                return Optional.of(parsedDate.plusDays(1));
+            } catch (Exception e) {
+                // Log the exception and continue to the next format
+                // System.err.println("Failed to parse date with format: " + format + " due to: " + e.getMessage());
+            }
         }
+        return Optional.empty();
     }
 
     public static LocalDate convertDateAsLocalDate(Date dateValue) {

@@ -12,6 +12,7 @@ import ptithcm.device_maintenance.maintenanceLog.dto.CreateMaintenanceLogDto;
 import ptithcm.device_maintenance.maintenanceLog.dto.UpdateMaintenanceLogDto;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -58,9 +59,14 @@ public class MaintenanceLogService {
             throw new BadRequestException("Maintenance log not found");
         }
 
+        Optional<LocalDate> parsedCompleteDate = DateHelper.parseStringAsLocalDate(payload.getCompleteDate());
+        if (parsedCompleteDate.isEmpty()) {
+            throw new BadRequestException("Invalid complete date format");
+        }
+
         MaintenanceLog updatedMaintenanceLog = updatingMaintenanceLog.get();
         updatedMaintenanceLog.setDescription(payload.getDescription());
-        updatedMaintenanceLog.setCompleteDate(DateHelper.parseStringAsLocalDate(payload.getCompleteDate()));
+        updatedMaintenanceLog.setCompleteDate(parsedCompleteDate.get());
         updatedMaintenanceLog.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         return managementLogRepository.save(updatedMaintenanceLog);
     }

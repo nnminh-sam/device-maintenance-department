@@ -12,6 +12,9 @@ import ptithcm.device_maintenance.employee.Employee;
 import ptithcm.device_maintenance.employee.Gender;
 import ptithcm.device_maintenance.helper.DateHelper;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,20 +53,25 @@ public class RegisterRequest {
     private String password;
 
     public Employee toEmployee(PasswordEncoder passwordEncoder) throws BadRequestException {
-        try {
-            return Employee.builder()
-                    .firstName(this.firstName)
-                    .lastName(this.lastName)
-                    .citizenId(this.citizenId)
-                    .dateOfBirth(DateHelper.parseStringAsLocalDate(this.dateOfBirth))
-                    .gender(this.gender)
-                    .phone(this.phone)
-                    .address(this.address)
-                    .email(this.email)
-                    .password(passwordEncoder.encode(this.password))
-                    .build();
-        } catch (Exception e) {
-            throw new BadRequestException("Invalid date of birth format!");
+        Optional<LocalDate> parsedDob = DateHelper.parseStringAsLocalDate(this.dateOfBirth);
+        if (parsedDob.isEmpty()) {
+            throw new BadRequestException("Invalid date of birth format");
         }
+
+        if (parsedDob.get().isAfter(LocalDate.now())) {
+            throw new BadRequestException("Invalid date of birth");
+        }
+
+        return Employee.builder()
+                .firstName(this.firstName)
+                .lastName(this.lastName)
+                .citizenId(this.citizenId)
+                .dateOfBirth(parsedDob.get())
+                .gender(this.gender)
+                .phone(this.phone)
+                .address(this.address)
+                .email(this.email)
+                .password(passwordEncoder.encode(this.password))
+                .build();
     }
 }
