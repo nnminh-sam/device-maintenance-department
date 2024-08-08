@@ -39,11 +39,16 @@ public class DeviceService {
         Device newDevice = Device.builder()
                 .serialNumber(payload.getSerialNumber())
                 .deviceName(payload.getDeviceName())
+                .description(payload.getDescription())
                 .purchaseDate(parsedPurchaseDate.get())
                 .warrantyExpiryDate(parsedWarrantyExpiryDate.get())
                 .deviceStatus(payload.getDeviceStatus())
                 .build();
-        return deviceRepository.save(newDevice);
+        try {
+            return deviceRepository.save(newDevice);
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
 
     public Device updateDevice(UpdateDeviceDto payload) throws BadRequestException {

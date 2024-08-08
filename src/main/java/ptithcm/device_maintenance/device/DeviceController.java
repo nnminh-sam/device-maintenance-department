@@ -46,9 +46,9 @@ public class DeviceController {
         );
     }
 
-    @PutMapping
+    @PostMapping
     public ResponseEntity<ResponseDto<Device>> createDevice(
-            @NotNull @RequestBody CreateDeviceDto payload
+            @RequestBody CreateDeviceDto payload
     ) throws BadRequestException {
         return ResponseEntity.ok(ResponseDto.<Device>builder()
                 .data(deviceService.createDevice(payload))
