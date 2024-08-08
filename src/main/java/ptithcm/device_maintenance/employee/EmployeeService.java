@@ -7,6 +7,7 @@ import ptithcm.device_maintenance.employee.dtos.UpdateEmployeeDto;
 import ptithcm.device_maintenance.helper.DateHelper;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,7 +15,15 @@ import java.util.Optional;
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
+
     public Optional<Employee> findById(Integer id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+
         return employeeRepository.findById(id);
     }
 

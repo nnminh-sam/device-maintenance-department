@@ -10,12 +10,23 @@ import ptithcm.device_maintenance.employee.dtos.UpdateEmployeeDto;
 import ptithcm.device_maintenance.exception.UnauthorizedException;
 import ptithcm.device_maintenance.helper.dto.ResponseDto;
 
+import java.util.List;
+
 @RequestMapping("${resource.prefix}/${resource.version}/${resource.module.employee.name}")
 @RestController
 @RequiredArgsConstructor
 public class EmployeeController {
     private final EmployeeService employeeService;
 
+    @GetMapping("/all")
+    public ResponseEntity<ResponseDto<List<Employee>>> getAllEmployee() {
+        return ResponseEntity.ok(ResponseDto.<List<Employee>>builder()
+                .data(employeeService.getAllEmployees())
+                .status(HttpStatus.OK)
+                .message("Success")
+                .build());
+    }
+    
     @GetMapping("/my")
     public ResponseEntity<ResponseDto<Employee>> getEmployeeInformation() {
         var context = SecurityContextHolder.getContext().getAuthentication();

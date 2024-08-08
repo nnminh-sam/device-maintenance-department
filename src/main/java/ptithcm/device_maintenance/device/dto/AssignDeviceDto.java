@@ -9,18 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateDeviceDto {
-    private String id;
-
-    private String serialNumber;
-
-    private String deviceName;
-
-    private String description;
-
-    private String purchaseDate;
-
-    private String warrantyExpiryDate;
+public class AssignDeviceDto {
+    private String deviceId;
 
     private String assigneeId;
 
@@ -28,7 +18,7 @@ public class UpdateDeviceDto {
 
     private String roomId;
 
-    private String assignedDate;
+    private String assignDate;
 
     private String deviceStatus;
 }

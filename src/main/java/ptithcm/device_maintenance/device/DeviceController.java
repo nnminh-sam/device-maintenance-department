@@ -6,6 +6,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ptithcm.device_maintenance.device.dto.AssignDeviceDto;
 import ptithcm.device_maintenance.device.dto.CreateDeviceDto;
 import ptithcm.device_maintenance.device.dto.UpdateDeviceDto;
 import ptithcm.device_maintenance.helper.dto.ResponseDto;
@@ -52,6 +53,18 @@ public class DeviceController {
     ) throws BadRequestException {
         return ResponseEntity.ok(ResponseDto.<Device>builder()
                 .data(deviceService.createDevice(payload))
+                .status(HttpStatus.OK)
+                .message("Success")
+                .build()
+        );
+    }
+
+    @PatchMapping("/assign")
+    public ResponseEntity<ResponseDto<Device>> assignDevice(
+            @RequestBody AssignDeviceDto payload
+    ) throws BadRequestException {
+        return ResponseEntity.ok(ResponseDto.<Device>builder()
+                .data(deviceService.assignDevice(payload))
                 .status(HttpStatus.OK)
                 .message("Success")
                 .build()

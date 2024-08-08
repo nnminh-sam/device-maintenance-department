@@ -45,11 +45,15 @@ public class Device extends BaseEntity {
     @Column(name = "device_status")
     private String deviceStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "assignee_id")
+    private Employee assignee;
 }
