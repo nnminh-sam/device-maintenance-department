@@ -91,9 +91,6 @@ public class DeviceService {
             }
             updatedDevice.setAssignedDate(parsedAssignedDate.get());
         }
-        else if (payload.getAssignedDate() == null) {
-            updatedDevice.setAssignedDate(null);
-        }
 
         if (payload.getSerialNumber() != null && !updatedDevice.getSerialNumber().equals(payload.getSerialNumber())) {
             updatedDevice.setSerialNumber(payload.getSerialNumber());

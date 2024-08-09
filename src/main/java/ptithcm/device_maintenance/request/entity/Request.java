@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import ptithcm.device_maintenance.device.Device;
 import ptithcm.device_maintenance.employee.Employee;
 import ptithcm.device_maintenance.helper.BaseEntity;
+import ptithcm.device_maintenance.room.Room;
 
 import java.time.LocalDate;
 
@@ -31,7 +32,7 @@ public class Request extends BaseEntity {
     @Column(name = "description_before", nullable = false)
     private String beforeDescription;
 
-    @Column(name = "description_after", nullable = false)
+    @Column(name = "description_after")
     private String afterDescription;
 
     @Column(nullable = false)
@@ -40,11 +41,19 @@ public class Request extends BaseEntity {
     @Column(name = "complete_date")
     private LocalDate completedDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "requested_by")
+    private Employee requestBy;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_id")
+    private Room room;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "device_id")
     private Device device;
 }

@@ -20,6 +20,10 @@ public class DateHelper {
     );
 
     public static Optional<LocalDate> parseStringAsLocalDate(String date) {
+        if (date == null) {
+            return Optional.empty();
+        }
+
         for (var format : formats) {
             try {
                 LocalDate parsedDate = LocalDate.parse(date, format);

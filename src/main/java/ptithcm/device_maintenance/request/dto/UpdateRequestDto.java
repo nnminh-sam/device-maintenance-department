@@ -1,7 +1,5 @@
 package ptithcm.device_maintenance.request.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateRequestDto {
-    @NotNull(message = "Request's ID cannot be null")
-    @NotBlank(message = "Request's ID cannot be blank")
-    private int id;
+    private String id;
 
     private String RequestType;
 
@@ -25,4 +21,10 @@ public class UpdateRequestDto {
     private String status;
 
     private String completeDate;
+
+    private String employeeId;
+
+    private String roomId;
+
+    private String deviceId;
 }

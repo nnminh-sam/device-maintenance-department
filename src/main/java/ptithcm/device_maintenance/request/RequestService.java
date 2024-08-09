@@ -15,6 +15,8 @@ import ptithcm.device_maintenance.request.entity.RequestStatus;
 import ptithcm.device_maintenance.request.entity.RequestType;
 
 import ptithcm.device_maintenance.device.Device;
+import ptithcm.device_maintenance.room.Room;
+import ptithcm.device_maintenance.room.RoomService;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -28,26 +30,46 @@ public class RequestService {
 
     private final DeviceService deviceService;
 
+    private final RoomService roomService;
+
     private final EmployeeService employeeService;
 
-    public Request save(@NotNull CreateRequestDto payload) throws BadRequestException {
-        Optional<Device> selectingDevice = deviceService.findById(payload.getDeviceId());
+    public Request save(CreateRequestDto payload) throws BadRequestException {
+        var requestBuilder = Request.builder();
+
+        Optional<Device> selectingDevice = deviceService.findById(Integer.parseInt(payload.getDeviceId()));
         if (selectingDevice.isEmpty()) {
             throw new BadRequestException("Device not found");
         }
+        requestBuilder.device(selectingDevice.get());
 
-        Optional<Employee> selectingEmployee = employeeService.findById(payload.getEmployeeId());
-        if (selectingEmployee.isEmpty()) {
-            throw new BadRequestException("Employee not found");
+        Optional<Employee> requestEmployee = employeeService.findById(Integer.parseInt(payload.getRequestBy()));
+        if (requestEmployee.isEmpty()) {
+            throw new BadRequestException("Request employee not found");
+        }
+        requestBuilder.requestBy(requestEmployee.get());
+
+        if (payload.getEmployeeId() != null) {
+            Optional<Employee> employee = employeeService.findById(Integer.parseInt(payload.getEmployeeId()));
+            if (employee.isEmpty()) {
+                throw new BadRequestException("Employee not found");
+            }
+            requestBuilder.employee(employee.get());
         }
 
-        Request request = Request.builder()
+        if (payload.getRoomId() != null) {
+            Optional<Room> room = roomService.findById(Integer.parseInt(payload.getRoomId()));
+            if (room.isEmpty()) {
+                throw new BadRequestException("Room not found");
+            }
+            requestBuilder.room(room.get());
+        }
+
+        return requestRepository.save(requestBuilder
                 .requestType(RequestType.valueOf(payload.getRequestType()))
                 .beforeDescription(payload.getBeforeDescription())
-                .device(selectingDevice.get())
-                .employee(selectingEmployee.get())
-                .build();
-        return requestRepository.save(request);
+                .status(RequestStatus.PENDING)
+                .build());
     }
 
     public Optional<Request> findById(int id) {
@@ -59,22 +81,23 @@ public class RequestService {
     }
 
     public Request update(@NotNull UpdateRequestDto payload) throws BadRequestException {
-        Optional<Request> updatingRequest = requestRepository.findById(payload.getId());
+        Optional<Request> updatingRequest = requestRepository.findById(Integer.valueOf(payload.getId()));
         if (updatingRequest.isEmpty()) {
             throw new BadRequestException("Request not found");
         }
+        Request updatedRequest = updatingRequest.get();
 
         var parsedCompletedDate = DateHelper.parseStringAsLocalDate(payload.getCompleteDate());
         if (parsedCompletedDate.isEmpty()) {
             throw new BadRequestException("Invalid complete date format");
         }
+        updatedRequest.setCompletedDate(parsedCompletedDate.get());
 
-        Request updatedRequest = updatingRequest.get();
         updatedRequest.setRequestType(RequestType.valueOf(payload.getRequestType()));
         updatedRequest.setBeforeDescription(payload.getBeforeDescription());
         updatedRequest.setAfterDescription(payload.getAfterDescription());
         updatedRequest.setStatus(RequestStatus.valueOf(payload.getStatus()));
-        updatedRequest.setCompletedDate(parsedCompletedDate.get());
+
         return requestRepository.save(updatedRequest);
     }
 
