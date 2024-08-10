@@ -6,17 +6,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import ptithcm.device_maintenance.device.Device;
 import ptithcm.device_maintenance.employee.Employee;
 import ptithcm.device_maintenance.helper.BaseEntity;
-
-import java.time.LocalDate;
+import ptithcm.device_maintenance.request.entity.Request;
 
 @Entity
 @Table(name = "maintenance_logs", uniqueConstraints = {
         @UniqueConstraint(
                 name = "maintenance_logs_device_id_employee_id_unique",
-                columnNames = {"device_id", "employee_id"}
+                columnNames = {"request_id", "employee_id"}
         )
 })
 @EqualsAndHashCode(callSuper = true)
@@ -29,17 +27,11 @@ public class MaintenanceLog extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "complete_date", nullable = false)
-    private LocalDate completeDate;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_id")
+    private Request request;
 
-    @Column
-    private String description;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id")
-    private Device device;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
     private Employee employee;
 }

@@ -8,6 +8,7 @@ import ptithcm.device_maintenance.device.DeviceService;
 import ptithcm.device_maintenance.employee.Employee;
 import ptithcm.device_maintenance.employee.EmployeeService;
 import ptithcm.device_maintenance.helper.DateHelper;
+import ptithcm.device_maintenance.request.dto.CompleteRequestDto;
 import ptithcm.device_maintenance.request.dto.CreateRequestDto;
 import ptithcm.device_maintenance.request.dto.UpdateRequestDto;
 import ptithcm.device_maintenance.request.entity.Request;
@@ -99,6 +100,22 @@ public class RequestService {
         updatedRequest.setStatus(RequestStatus.valueOf(payload.getStatus()));
 
         return requestRepository.save(updatedRequest);
+    }
+
+    public Request completeRequest(CompleteRequestDto payload) throws BadRequestException {
+        var request = requestRepository.findById(Integer.valueOf(payload.getId()));
+        if (request.isEmpty()) {
+            throw new BadRequestException("Request not found");
+        }
+        Request completedRequest = request.get();
+
+        var parsedCompletedDate = DateHelper.parseStringAsLocalDate(payload.getCompleteDate());
+        if (parsedCompletedDate.isEmpty()) {
+            throw new BadRequestException("Invalid complete date format");
+        }
+        completedRequest.setCompletedDate(parsedCompletedDate.get());
+        completedRequest.setAfterDescription(payload.getAfterDescription());
+        return requestRepository.save(completedRequest);
     }
 
     public void delete(int id) throws BadRequestException {

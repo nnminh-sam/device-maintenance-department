@@ -3,13 +3,14 @@ package ptithcm.device_maintenance.maintenanceLog;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
-import ptithcm.device_maintenance.device.Device;
-import ptithcm.device_maintenance.device.DeviceService;
 import ptithcm.device_maintenance.employee.Employee;
 import ptithcm.device_maintenance.employee.EmployeeService;
 import ptithcm.device_maintenance.helper.DateHelper;
 import ptithcm.device_maintenance.maintenanceLog.dto.CreateMaintenanceLogDto;
 import ptithcm.device_maintenance.maintenanceLog.dto.UpdateMaintenanceLogDto;
+import ptithcm.device_maintenance.request.RequestService;
+import ptithcm.device_maintenance.request.dto.CompleteRequestDto;
+import ptithcm.device_maintenance.request.entity.Request;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -22,27 +23,26 @@ import java.util.Optional;
 public class MaintenanceLogService {
     private final MaintenanceLogRepository managementLogRepository;
 
-    private final DeviceService deviceService;
+    private final RequestService requestService;
 
     private final EmployeeService employeeService;
 
     public MaintenanceLog save(CreateMaintenanceLogDto payload) throws BadRequestException {
-        Optional<Device> selectingDevice = deviceService.findById(payload.getDeviceId());
-        if (selectingDevice.isEmpty()) {
-            throw new BadRequestException("Device not found");
-        }
+        var maintenanceLogBuilder = MaintenanceLog.builder();
 
-        Optional<Employee> selectingEmployee = employeeService.findById(payload.getEmployeeId());
+        Optional<Request> selectingRequest = requestService.findById(Integer.parseInt(payload.getRequestId()));
+        if (selectingRequest.isEmpty()) {
+            throw new BadRequestException("Request not found");
+        }
+        maintenanceLogBuilder.request(selectingRequest.get());
+
+        Optional<Employee> selectingEmployee = employeeService.findById(Integer.parseInt(payload.getEmployeeId()));
         if (selectingEmployee.isEmpty()) {
             throw new BadRequestException("Employee not found");
         }
+        maintenanceLogBuilder.employee(selectingEmployee.get());
 
-        MaintenanceLog maintenanceLog = MaintenanceLog.builder()
-                .description(payload.getDescription())
-                .employee(selectingEmployee.get())
-                .device(selectingDevice.get())
-                .build();
-        return managementLogRepository.save(maintenanceLog);
+        return managementLogRepository.save(maintenanceLogBuilder.build());
     }
 
     public List<MaintenanceLog> findAll() {
@@ -54,19 +54,24 @@ public class MaintenanceLogService {
     }
 
     public MaintenanceLog update(UpdateMaintenanceLogDto payload) throws BadRequestException {
-        Optional<MaintenanceLog> updatingMaintenanceLog = managementLogRepository.findById(payload.getId());
+        Optional<MaintenanceLog> updatingMaintenanceLog = managementLogRepository.findById(Integer
+                .parseInt(payload.getId()));
         if (updatingMaintenanceLog.isEmpty()) {
             throw new BadRequestException("Maintenance log not found");
         }
+        MaintenanceLog updatedMaintenanceLog = updatingMaintenanceLog.get();
 
-        Optional<LocalDate> parsedCompleteDate = DateHelper.parseStringAsLocalDate(payload.getCompleteDate());
+        var parsedCompleteDate = DateHelper.parseStringAsLocalDate(payload.getCompleteDate());
         if (parsedCompleteDate.isEmpty()) {
             throw new BadRequestException("Invalid complete date format");
         }
 
-        MaintenanceLog updatedMaintenanceLog = updatingMaintenanceLog.get();
-        updatedMaintenanceLog.setDescription(payload.getDescription());
-        updatedMaintenanceLog.setCompleteDate(parsedCompleteDate.get());
+        requestService.completeRequest(CompleteRequestDto.builder()
+                        .id(updatedMaintenanceLog.getRequest().getId().toString())
+                        .afterDescription(payload.getAfterDescription())
+                        .completeDate(payload.getCompleteDate())
+                .build());
+
         updatedMaintenanceLog.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         return managementLogRepository.save(updatedMaintenanceLog);
     }

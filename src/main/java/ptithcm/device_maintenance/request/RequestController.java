@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ptithcm.device_maintenance.helper.dto.ResponseDto;
+import ptithcm.device_maintenance.request.dto.CompleteRequestDto;
 import ptithcm.device_maintenance.request.dto.CreateRequestDto;
 import ptithcm.device_maintenance.request.dto.UpdateRequestDto;
 import ptithcm.device_maintenance.request.entity.Request;

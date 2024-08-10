@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateMaintenanceLogDto {
-    private int deviceId;
+    private String requestId;
 
-    private int employeeId;
-
-    private String description;
+    private String employeeId;
 }

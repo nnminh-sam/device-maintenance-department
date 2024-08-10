@@ -1,4 +1,4 @@
-package ptithcm.device_maintenance.maintenanceLog.dto;
+package ptithcm.device_maintenance.request.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateMaintenanceLogDto {
+public class CompleteRequestDto {
     private String id;
 
     private String completeDate;
