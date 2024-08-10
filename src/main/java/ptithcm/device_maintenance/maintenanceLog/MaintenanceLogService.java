@@ -36,12 +36,6 @@ public class MaintenanceLogService {
         }
         maintenanceLogBuilder.request(selectingRequest.get());
 
-        Optional<Employee> selectingEmployee = employeeService.findById(Integer.parseInt(payload.getEmployeeId()));
-        if (selectingEmployee.isEmpty()) {
-            throw new BadRequestException("Employee not found");
-        }
-        maintenanceLogBuilder.employee(selectingEmployee.get());
-
         return managementLogRepository.save(maintenanceLogBuilder.build());
     }
 

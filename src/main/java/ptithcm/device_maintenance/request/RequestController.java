@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ptithcm.device_maintenance.helper.dto.ResponseDto;
 import ptithcm.device_maintenance.request.dto.CompleteRequestDto;
 import ptithcm.device_maintenance.request.dto.CreateRequestDto;
+import ptithcm.device_maintenance.request.dto.MaintainRequestDto;
 import ptithcm.device_maintenance.request.dto.UpdateRequestDto;
 import ptithcm.device_maintenance.request.entity.Request;
 
@@ -63,6 +64,17 @@ public class RequestController {
     ) throws BadRequestException {
         return ResponseEntity.ok(ResponseDto.<Request>builder()
                 .data(requestService.update(payload))
+                .status(HttpStatus.OK)
+                .message("Success")
+                .build());
+    }
+
+    @PatchMapping("/maintenance")
+    public ResponseEntity<ResponseDto<Request>> maintainRequest(
+        @RequestBody @NotNull MaintainRequestDto payload
+    ) throws BadRequestException {
+        return ResponseEntity.ok(ResponseDto.<Request>builder()
+                .data(requestService.maintainRequest(payload))
                 .status(HttpStatus.OK)
                 .message("Success")
                 .build());

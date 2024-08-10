@@ -10,6 +10,7 @@ import ptithcm.device_maintenance.employee.EmployeeService;
 import ptithcm.device_maintenance.helper.DateHelper;
 import ptithcm.device_maintenance.request.dto.CompleteRequestDto;
 import ptithcm.device_maintenance.request.dto.CreateRequestDto;
+import ptithcm.device_maintenance.request.dto.MaintainRequestDto;
 import ptithcm.device_maintenance.request.dto.UpdateRequestDto;
 import ptithcm.device_maintenance.request.entity.Request;
 import ptithcm.device_maintenance.request.entity.RequestStatus;
@@ -116,6 +117,21 @@ public class RequestService {
         completedRequest.setCompletedDate(parsedCompletedDate.get());
         completedRequest.setAfterDescription(payload.getAfterDescription());
         return requestRepository.save(completedRequest);
+    }
+
+    public Request maintainRequest(MaintainRequestDto payload) throws BadRequestException {
+        var request = requestRepository.findById(Integer.valueOf(payload.getRequestId()));
+        if (request.isEmpty()) {
+            throw new BadRequestException("Request not found");
+        }
+        Request maintainingRequest = request.get();
+
+        var employee = employeeService.findById(Integer.parseInt(payload.getMaintainById()));
+        if (employee.isEmpty()) {
+            throw new BadRequestException("Employee not found");
+        }
+        maintainingRequest.setMaintainBy(employee.get());
+        return requestRepository.save(maintainingRequest);
     }
 
     public void delete(int id) throws BadRequestException {

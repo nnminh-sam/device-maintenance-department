@@ -50,6 +50,10 @@ public class Request extends BaseEntity {
     private Employee employee;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "maintain_by")
+    private Employee maintainBy;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id")
     private Room room;
 
