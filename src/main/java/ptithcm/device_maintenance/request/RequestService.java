@@ -89,11 +89,17 @@ public class RequestService {
         }
         Request updatedRequest = updatingRequest.get();
 
-        var parsedCompletedDate = DateHelper.parseStringAsLocalDate(payload.getCompleteDate());
-        if (parsedCompletedDate.isEmpty()) {
-            throw new BadRequestException("Invalid complete date format");
+        if (payload.getCompleteDate() != null) {
+            var parsedCompletedDate = DateHelper.parseStringAsLocalDate(payload.getCompleteDate());
+            if (parsedCompletedDate.isEmpty()) {
+                throw new BadRequestException("Invalid complete date format");
+            }
+            updatedRequest.setCompletedDate(parsedCompletedDate.get());
         }
-        updatedRequest.setCompletedDate(parsedCompletedDate.get());
+
+        if (!payload.getStatus().equals(RequestStatus.COMPLETED.toString())) {
+            updatedRequest.setCompletedDate(null);
+        }
 
         updatedRequest.setRequestType(RequestType.valueOf(payload.getRequestType()));
         updatedRequest.setBeforeDescription(payload.getBeforeDescription());
