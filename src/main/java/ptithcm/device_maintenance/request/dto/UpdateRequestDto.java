@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class UpdateRequestDto {
     private String id;
 
-    private String RequestType;
+    private String requestType;
 
     private String beforeDescription;
 
@@ -21,10 +21,4 @@ public class UpdateRequestDto {
     private String status;
 
     private String completeDate;
-
-    private String employeeId;
-
-    private String roomId;
-
-    private String deviceId;
 }
